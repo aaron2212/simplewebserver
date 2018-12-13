@@ -1,0 +1,69 @@
+Directory structure:
+	config/
+		404.html
+		config.py
+	docs/
+	htdocs/
+	server.py
+
+Features:
+	[+] Serving web pages
+	[+] Directory listing (configured in settings)
+	[+] Logging (configured in settings)
+	[+] Content Compression
+
+GET / HTTP/1.1 -> ['GET', '/', 'HTTP/1.1']
+
+1. Accept connection
+2. Parse request
+	- Check correct format (400 if incorrect)
+	- Check allowed method (405 if disallowed)
+3.1. Send response headers
+3.2. Send requested file
+	- If path is '/': search for index file (404 if not found)
+	- Check if path exists (404 if not found)
+		- Check if file exists; set Content-Type header; set Content-Length header; set Content-Disposition header if applicable
+		- Check if directory exists
+			- Send directory listing if enabled (error if not enabled)
+
+
+Classes:
+	WebServer(host, port)
+		start()												start the web server and listen for and accept connections
+		handle_connection(client, addr)						handles the connection and creates a new Request object
+		reload_config_file()								reload the config file before each new connection
+	
+	Request(request)
+		validate()											parse the request and make sure it is valid
+		get_request()										calls get_request_method, get_path and get_version and returns the result
+		get_request_method()								gets the request methods used in the request
+		get_path()											gets the path requested in the request
+		get_version()										gets the HTTP version used in the request
+	
+	Response(status_code, file_contents, content_length)
+		get_status_code()									returns the status code to be sent with the response
+		add_header(header, value)							set the header to be sent along with the response
+		add_data(data)										adds data to be sent along with the response (file contents)
+		send()												send the response
+	
+	File(full_path)
+		get_file_contents()									get the contents of the file to be sent back with the HTTP response
+		get_mime_type()										get the MIME type of the file
+		is_binary()											return True if the file is a binary file else False
+		get_path_info()										check if the path exists and whether it is a file or a directory
+		is_path_listable()									checks whether directory listing is enabled and if so, checks whether a .noindex file exists
+		set_full_path(full_path)							set the full path to the file to be sent in the response
+		get_content_length()								get the length of the file to be sent as the Content-Length HTTP header
+		set_content_length(content_length)					sets the content length of the file to be sent as the Content-Length HTTP header
+		get_index_file()									get the website index file when the user requests the '/' path
+	
+handle_connection(client, addr):
+	- gets the data sent in the request and creates a new Request object to handle the request
+	- calls Request.validate()
+	- calls get_path_info(full_path)
+	- calls get_file_contents(full_path)
+
+
+Example status in console:
+	[25/May/2018 15:23:36] "GET / HTTP/1.1" 200 863
+	[25/May/2018 15:23:36] "GET /static/uploader/css/main.css HTTP/1.1" 200 478

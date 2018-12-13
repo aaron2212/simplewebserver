@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<h1>Index of {{ url }}</h1>
+		<hr />
+
+		<table>
+			<tr>
+				<th><b>Name</b></th>
+				<th><b>Last Modified</b></th>
+				<th><b>Size</b></th>
+			</tr>
+			<tr>
+				<td><a href='{{ url }}/..'>Parent Directory</a></td>
+			</tr>
+			{% for file in files %}
+			<tr>
+				<td><a href="{{ url }}/{{ file.filename }}">{{ file.filename }}</a></td>
+				<td>{{ file.last_modified_time }}</td>
+				<td>{{ file.filesize }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+
+		<hr />
+
+		{{ server_name }} at {{ host }} Port {{ port }}
+	</body>
+</html>
