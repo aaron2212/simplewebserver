@@ -3,8 +3,8 @@ A simple web server written in Python.
 
 ### Features:
   * Serving web pages (including static files)
-  * Directory listing (can be turned on and off in settings)
-  * Logging (can be turned on and off in settings)
+  * Directory listing (can be configured in settings)
+  * Logging (can be configured in settings)
   * Content compression
   * Custom 404 and directory listing pages
 
